@@ -8,14 +8,17 @@ public class Pacman extends PlayerControlledGameObject {
 	private static final double OVERLAP_THRESHOLD = .75, HIT_THRESHOLD = .05;
 	private Rectangle rect;
 	private int locx, locy;
-
+	private Image left = getImage("pacmanLeft.png");
+	private Image right = getImage("pacman.png");
+	private Image up;
+	private Image down;
+	
 	public Pacman(int x, int y, int w, int h, ActionMap am) {
 		super(x, y, w, h, "pacman.png", am);
 		rect = new Rectangle (x,y,w,h);
 		locx = x;
 		locy = y;
 	}
-	
 	
 	public void move(int i, int j) {
 		this.getRect().translate(i*(int)((this.getRect().getWidth())/4), j*(int)(this.getRect().getHeight())/4);
@@ -39,21 +42,21 @@ public class Pacman extends PlayerControlledGameObject {
 		move(-1,0);
 		this.setLocx(this.getLocx());
 		this.setLocy(this.getLocy());
+		setImage(left);
 	}
 	
 	public void moveRight() {
 		move(1,0);
 		this.setLocx(this.getLocx());
 		this.setLocy(this.getLocy());
-
+		setImage(right);
 	}
-	
+
 	public void moveUp() {
 		move(0,-1);
 		this.setLocx(this.getLocx());
 		this.setLocy(this.getLocy());
-
-
+		
 	}
 	
 	public void moveDown() {
@@ -83,5 +86,4 @@ public class Pacman extends PlayerControlledGameObject {
 				overArea = area(over);
 		return overArea > Math.min(thisArea, goArea)*OVERLAP_THRESHOLD;
 	}
-//change/rotate image when it moves left
 }
