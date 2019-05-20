@@ -44,11 +44,13 @@ public class GameObject {
 		locy = y;
 	}
 	
-	
+	public void setImage(Image i) {
+		image = i;
+	}
 
 	public void draw(Graphics g) {
 		if(image != null) {
-			g.drawImage(image, rect.x, rect.y, rect.width,rect.height, null);
+			g.drawImage(image, rect.x, rect.y, rect.width, rect.height, null);
 			g.drawRect(rect.x, rect.y, rect.width, rect.height);
 		}
 	}
@@ -129,7 +131,6 @@ public class GameObject {
 		move(0,1);
 		this.setLocx(this.getLocx());
 		this.setLocy(this.getLocy());
-
 
 	}
 }
