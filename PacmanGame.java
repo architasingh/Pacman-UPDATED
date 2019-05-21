@@ -9,7 +9,7 @@ public class PacmanGame {
 	List<GameObject> gos = new ArrayList<>();
 	
 	// list of autos should come from loadLevel
-	List<GameObject> coins = new ArrayList<>();
+	List<Coin> coins = new ArrayList<>();
 	//list of walls
 	List<Wall> walls = new ArrayList<>();
 	// list of logs
@@ -29,22 +29,28 @@ public class PacmanGame {
 		blueghost = new ghost(300,350,Gsize,Gsize, "blueghost.png"); 
 		yellowghost = new ghost(360,350,Gsize,Gsize, "yellowghost.png");
 		redghost = new ghost(420,350,Gsize,Gsize, "redghost.png");
+		for(int r=10; r <720;r += 72) {
+			for(int c = 10; c < 720; c +=72) {
+			coins.add(new Coin(c,r,1,1));
+			}
+		}
 		walls.add(new Wall(40,40, 160, 160));//two squares
 		walls.add(new Wall(520,40,160, 160));//two squares
 		walls.add(new Wall(0,280,40, 400));//L shaped ones vertical
 		walls.add(new Wall(0,680, 400,40)); //horizontal
-		walls.add(new Wall(640,250,40,300));//vertical ones at the bottom
-		walls.add(new Wall(80,330,40,310));
+		walls.add(new Wall(645,250,40,300));//vertical ones at the bottom
+		walls.add(new Wall(85,330,40,310));
 		ghosts.add(pinkghost);
 		ghosts.add(blueghost);
 		ghosts.add(redghost);
 		ghosts.add(yellowghost);
 		gos.add(pacman);
-		level++;
-		for(int i=0; i < 10;)
-		
-		loadLevel();
+//		level++;
+//		coins.add(new Coin(250,250,10,10));
 	}
+//		
+//		loadLevel();
+	
 	
 	
 	
@@ -190,6 +196,9 @@ public class PacmanGame {
 		}
 		for(GameObject ghost: ghosts) {
 			ghost.draw(g);
+		}
+		for(Coin c: coins) {
+			c.draw(g);
 		}
 		for(Wall w: walls) {
 			w.draw(g);
