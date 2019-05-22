@@ -99,7 +99,7 @@ public class GameObject {
 	}
 
 	public void move(int i, int j) {
-		this.getRect().translate(i*(int)(this.getRect().getWidth()), j*(int)(this.getRect().getHeight()));
+		this.getRect().translate(i*(int)(this.getRect().getWidth())*2, j*(int)(this.getRect().getHeight())*2);
 		this.setLocx(this.getLocx());
 		this.setLocy(this.getLocy());
 		locx = this.getRect().x;
@@ -113,29 +113,42 @@ public class GameObject {
 	
 	public void moveLeft() {
 		move(-1,0);
-		this.setLocx(this.getLocx());
-		this.setLocy(this.getLocy());
+		if (!withinBounds()) {
+			moveRight();
+		}
 	}
 	
 	public void moveRight() {
 		move(1,0);
-		this.setLocx(this.getLocx());
-		this.setLocy(this.getLocy());
+		if (!withinBounds()) {
+			moveLeft();
+		}
 
 	}
 	
 	public void moveUp() {
 		move(0,-1);
-		this.setLocx(this.getLocx());
-		this.setLocy(this.getLocy());
+		if (!withinBounds()) {
+			moveDown();
+		}
 
+	}
+
+	public void moveDown() {
+		move(0,1);
+		if (!withinBounds()) {
+			moveUp();
+		}
 
 	}
 	
-	public void moveDown() {
-		move(0,1);
-		this.setLocx(this.getLocx());
-		this.setLocy(this.getLocy());
-
+	private boolean withinBounds() {
+		if (this.getLocx() > PacmanGameRunner.WIDTH || this.getLocx() < 0) {
+			return false;
+		}
+		if (this.getLocy() > PacmanGameRunner.HEIGHT || this.getLocy() < 0) {
+			return false;
+		}
+		return true;
 	}
 }
