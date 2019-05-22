@@ -10,7 +10,7 @@ import javax.imageio.stream.ImageInputStream;
 
 public class GameObject {
 
-	private static final double OVERLAP_THRESHOLD = .75, HIT_THRESHOLD = .05;
+	private static final double OVERLAP_THRESHOLD = 1, HIT_THRESHOLD = .75;
 	public final static String PATH_PREFIX = "res/images/";
 	private Rectangle rect;
 	
@@ -62,7 +62,7 @@ public class GameObject {
 		Rectangle over = collisionRect(go);
 		if(over.isEmpty())
 			return false;
-		double thisArea = area(rect), 
+		double thisArea = area(this.rect), 
 				goArea = area(go.getRect()),
 				overArea = area(over);
 		return overArea > Math.min(thisArea, goArea)*HIT_THRESHOLD;
@@ -99,9 +99,14 @@ public class GameObject {
 	}
 
 	public void move(int i, int j) {
-		this.getRect().translate(i*(int)(this.getRect().getWidth()/4), j*(int)(this.getRect().getHeight())/4);
+		this.getRect().translate(i*(int)(this.getRect().getWidth()), j*(int)(this.getRect().getHeight()));
 		this.setLocx(this.getLocx());
 		this.setLocy(this.getLocy());
+		locx = this.getRect().x;
+		locy = this.getRect().y;
+		
+		System.out.println(""+locx);
+		System.out.println("" + locy);
 		
 	}
 	
