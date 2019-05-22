@@ -13,7 +13,6 @@
 public class ghost extends GameObject {
 	private Image image;
 	private Rectangle rect;
-	private static final double/* OVERLAP_THRESHOLD = .75,*/ HIT_THRESHOLD = .1;
 	private int locx, locy, width, height;
 //	private Direction d;
 	public ghost(int x, int y, int w, int h, String str) {
@@ -48,43 +47,31 @@ public class ghost extends GameObject {
 	
 		return false;
 	}
-
-	public void move(int i, int j) {
-		this.getRect().translate(i*(int)(this.getRect().getWidth()/4), j*(int)(this.getRect().getHeight())/4);
-		this.setLocx(this.getLocx());
-		this.setLocy(this.getLocy());
+	
+	public void follow(Pacman p) {
+		int diffx = p.getLocx()-this.getLocx();
+		int diffy = p.getLocy()-this.getLocy();
+		if(diffx < 0) {
+				this.moveLeft();
+			
+		}
+		if(diffx > 0) {
+				this.moveRight();
+			
+		}
+		if(diffy < 0) {
+				this.moveUp();
+			
+		}
+		if(diffy>0) {
+				this.moveDown();
+			
+		}
 		
 	}
-	
-	
-	public void moveLeft() {
-		move(-1,0);
-		this.setLocx(this.getLocx());
-		this.setLocy(this.getLocy());
-	}
-	
-	public void moveRight() {
-		move(1,0);
-		this.setLocx(this.getLocx());
-		this.setLocy(this.getLocy());
 
-	}
 	
-	public void moveUp() {
-		move(0,-1);
-		this.setLocx(this.getLocx());
-		this.setLocy(this.getLocy());
 
-
-	}
-	
-	public void moveDown() {
-		move(0,1);
-		this.setLocx(this.getLocx());
-		this.setLocy(this.getLocy());
-
-
-	}
 }
 
 	
