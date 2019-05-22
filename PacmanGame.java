@@ -19,19 +19,18 @@ public class PacmanGame {
 	ghost pinkghost;
 	ghost blueghost;
 	ghost redghost;
-	ghost yellowghost;
+//	ghost yellowghost;
 	Pacman pacman;
 	int level=0;
 	public PacmanGame() {
-		
 		pacman = new Pacman(0,0, Gsize, Gsize,  null);
 		pinkghost = new ghost(240,350,Gsize,Gsize, "pinkghost.png");
 		blueghost = new ghost(300,350,Gsize,Gsize, "blueghost.png"); 
-		yellowghost = new ghost(360,350,Gsize,Gsize, "yellowghost.png");
+//		yellowghost = new ghost(360,350,Gsize,Gsize, "yellowghost.png");
 		redghost = new ghost(420,350,Gsize,Gsize, "redghost.png");
 		for(int r=10; r <720;r += 72) {
-			for(int c = 10; c < 720; c +=72) {
-			coins.add(new Coin(c,r,1,1));
+			for(int c = 10; c < 720; c +=50) {
+			coins.add(new Coin(c,r,5,5));
 			}
 		}
 		walls.add(new Wall(40,40, 160, 160));//two squares
@@ -43,10 +42,9 @@ public class PacmanGame {
 		ghosts.add(pinkghost);
 		ghosts.add(blueghost);
 		ghosts.add(redghost);
-		ghosts.add(yellowghost);
+//		ghosts.add(yellowghost);
 		gos.add(pacman);
 //		level++;
-//		coins.add(new Coin(250,250,10,10));
 	}
 //		
 //		loadLevel();
@@ -75,7 +73,7 @@ public class PacmanGame {
 		ghosts.add(pinkghost);
 		ghosts.add(blueghost);
 		ghosts.add(redghost);
-		ghosts.add(yellowghost);
+//		ghosts.add(yellowghost);
 		
 	}
 
@@ -83,7 +81,15 @@ public class PacmanGame {
 
 	// What do you want to do when a key is hit?
 	public void keyHit(String s) {
-		System.out.println("In pacman game (keyHit): "+s);
+		System.out.println("In pacman game (keyHit): "+s); 
+		for(int i = 0; i < coins.size(); i++) {
+			if(pacman.hit(coins.get(i))) {
+//				System.out.print("coin rect" + coins.get(i).getRect());
+				System.out.println("pacman rect" + pacman.getRect());
+				coins.remove(i);
+			}
+		}
+		
 		if(s.equals("left")) {
 			
 			int pacmansX = pacman.getLocx()-9;
