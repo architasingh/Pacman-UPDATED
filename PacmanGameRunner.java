@@ -116,9 +116,9 @@ public class PacmanGameRunner {
 			if(ticks/hurts > 5 ) {
 				game.blueghost.randomMove();
 			}
-			if(ticks/hurts > 6) {
-				game.yellowghost.randomMove();
-			}
+//			if(ticks/hurts > 6) {
+//				game.yellowghost.randomMove();
+//			}
 			if(ticks/hurts > 7) {
 				game.pinkghost.randomMove();
 			}
@@ -193,4 +193,3 @@ public class PacmanGameRunner {
 		game.draw(g);
 	}
 
-}
