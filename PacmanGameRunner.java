@@ -113,7 +113,7 @@ public class PacmanGameRunner {
 			panel.repaint();
 			System.out.println(ticks/hurts+" seconds");
 			
-			if(ticks/hurts > 5 ) {
+			if(ticks/hurts > 5 && ) {
 				game.blueghost.randomMove();
 			}
 //			if(ticks/hurts > 6) {
@@ -193,3 +193,4 @@ public class PacmanGameRunner {
 		game.draw(g);
 	}
 
+}
