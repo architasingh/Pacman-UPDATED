@@ -5,61 +5,59 @@ import java.util.*;
 
 public class PacmanGame {
 
-	// what are the things you see in the game?
+	public boolean youWon = false;
+	Ghost pinkghost;
+	Ghost blueghost;
+	Ghost redghost;
+	Pacman pacman;
+	
+	int level = 0;
+
 	List<GameObject> gos = new ArrayList<>();
 	
-	// list of autos should come from loadLevel
-	List<Coin> coins = new ArrayList<>();
-	//list of walls
-	List<Wall> walls = new ArrayList<>();
-	// list of logs
-	List<GameObject> ghosts = new ArrayList<>();
-	private int Gsize = 40;
 	
-	ghost pinkghost;
-	ghost blueghost;
-	ghost redghost;
-//	ghost yellowghost;
-	Pacman pacman;
-	int level=0;
+	List<Coin> coins = new ArrayList<>();
+
+	List<Wall> walls = new ArrayList<>();
+
+	List<Ghost> ghosts = new ArrayList<>();
+	
+	private int Gsize = 40;
+	public static final int down = 0, up = 1, right = 2, left =3;
+
 	public PacmanGame() {
-		pacman = new Pacman(0,0, Gsize, Gsize,  null);
-		pinkghost = new ghost(240,350,Gsize,Gsize, "pinkghost.png");
-		blueghost = new ghost(300,350,Gsize,Gsize, "blueghost.png"); 
-//		yellowghost = new ghost(360,350,Gsize,Gsize, "yellowghost.png");
-		redghost = new ghost(420,350,Gsize,Gsize, "redghost.png");
-		for(int r=10; r <720;r += 72) {
-			for(int c = 10; c < 720; c +=50) {
-			coins.add(new Coin(c,r,5,5));
+		pacman = new Pacman(0, 0, Gsize, Gsize, null);
+		pinkghost = new Ghost(240, 350, Gsize, Gsize, "pinkghost.png");
+		blueghost = new Ghost(300, 350, Gsize, Gsize, "_blueghost.png");
+		redghost = new Ghost(420, 350, Gsize, Gsize, "redghost.png");
+		
+		for (int y = Gsize/2; y < 720; y += Gsize) {
+			for (int x = Gsize/2; x < 720; x += Gsize) {
+				coins.add(new Coin(x, y, 5, 5)); // x, y, w, h
 			}
 		}
-		walls.add(new Wall(40,40, 160, 160));//two squares
-		walls.add(new Wall(520,40,160, 160));//two squares
-		walls.add(new Wall(0,280,40, 400));//L shaped ones vertical
-		walls.add(new Wall(0,680, 400,40)); //horizontal
-		walls.add(new Wall(645,250,40,300));//vertical ones at the bottom
-		walls.add(new Wall(85,330,40,310));
+		
+		walls.add(new Wall(40, 40, 160, 160));// two squares
+		walls.add(new Wall(520, 40, 160, 160));// two squares
+		walls.add(new Wall(0, 280, 40, 400));// L shaped ones vertical
+		walls.add(new Wall(0, 680, 400, 40)); // horizontal
+		walls.add(new Wall(640, 250, 40, 300));// vertical ones at the bottom
+		walls.add(new Wall(80, 320, 40, 310));
 		ghosts.add(pinkghost);
 		ghosts.add(blueghost);
 		ghosts.add(redghost);
-//		ghosts.add(yellowghost);
 		gos.add(pacman);
 //		level++;
 	}
-//		
-//		loadLevel();
-	
-	
-	
-	
+
 	private void loadLevel() {
-		// this is just an idea.  Maybe store the different levels as text files
+		// this is just an idea. Maybe store the different levels as text files
 		List<List<GameObject>> levelObjects = LevelReader.readInLevel(level);
 		gos.clear();
-		if(levelObjects != null) {
-			for(List<GameObject> list: levelObjects) {
-				if(list != null) {
-					for(GameObject go: list) {
+		if (levelObjects != null) {
+			for (List<GameObject> list : levelObjects) {
+				if (list != null) {
+					for (GameObject go : list) {
 //						if(go instanceof Log)
 //							logs.add(go);
 //						if(go instanceof Auto)
@@ -73,25 +71,20 @@ public class PacmanGame {
 		ghosts.add(pinkghost);
 		ghosts.add(blueghost);
 		ghosts.add(redghost);
-//		ghosts.add(yellowghost);
-		
 	}
-
-
 
 	// What do you want to do when a key is hit?
 	public void keyHit(String s) {
-		System.out.println("In pacman game (keyHit): "+s); 
+		if(coins.size() == 29) {
+			youWon = true;
+		}
 		for(int i = 0; i < coins.size(); i++) {
 			if(pacman.hit(coins.get(i))) {
-//				System.out.print("coin rect" + coins.get(i).getRect());
-				System.out.println("pacman rect" + pacman.getRect());
 				coins.remove(i);
 			}
 		}
 		
 		if(s.equals("left")) {
-			
 			int pacmansX = pacman.getLocx()-9;
 			int pacmansY = pacman.getLocy();
 			int num = 0; // number of overlapping walls
@@ -100,6 +93,9 @@ public class PacmanGame {
 				int wallsRightX = walls.get(i).getLocx() + walls.get(i).getWidth();
 				int wallsNorthY = walls.get(i).getLocy();
 				int wallsSouthY = walls.get(i).getLocy() + walls.get(i).getHeight();
+				if(pacmansX -30 <0) {
+					num++;
+				}
 				if(pacmansX > wallsLeftX && pacmansX < wallsRightX) {
 					if(pacmansY < wallsSouthY && pacmansY > wallsNorthY) {
 						num++;
@@ -107,6 +103,7 @@ public class PacmanGame {
 					if(pacmansY+39 <wallsSouthY && pacmansY +39 >wallsNorthY) {
 						num++;
 					}
+			
 				}
 			}
 			if(num == 0) {
@@ -126,6 +123,9 @@ public class PacmanGame {
 				int wallsRightX = walls.get(i).getLocx() + walls.get(i).getWidth();
 				int wallsNorthY = walls.get(i).getLocy();
 				int wallsSouthY = walls.get(i).getLocy() + walls.get(i).getHeight();
+				if(pacmansRight+20 > 720) {
+					num++;
+				}
 				if(pacmansRight > wallsLeftX && pacmansRight < wallsRightX) {
 					if(pacmansY < wallsSouthY && pacmansY > wallsNorthY) {
 						num++;
@@ -133,7 +133,6 @@ public class PacmanGame {
 					if(pacmansY+40 <wallsSouthY && pacmansY +40 >wallsNorthY) {
 						num++;
 					}
-					
 				}
 			}
 			if(num == 0) {
@@ -150,6 +149,9 @@ public class PacmanGame {
 				int wallsRightX = walls.get(i).getLocx() + walls.get(i).getWidth();
 				int wallsNorthY = walls.get(i).getLocy();
 				int wallsSouthY = walls.get(i).getLocy() + walls.get(i).getHeight();
+				if(pacmansY -30 <0) {
+					num++;
+				}
 				if(pacmansY < wallsSouthY && pacmansY > wallsNorthY) {
 					if(pacmansX > wallsLeftX && pacmansX < wallsRightX) {
 						num++;
@@ -157,7 +159,6 @@ public class PacmanGame {
 					if(pacmansX+39 > wallsLeftX && pacmansX +39 < wallsRightX) {
 						num++;
 					}
-					
 					
 				}
 			}
@@ -175,6 +176,9 @@ public class PacmanGame {
 				int wallsRightX = walls.get(i).getLocx() + walls.get(i).getWidth();
 				int wallsNorthY = walls.get(i).getLocy();
 				int wallsSouthY = walls.get(i).getLocy() + walls.get(i).getHeight();
+				if(pacmansY +20 >720) {
+					num++;
+				}
 				if(pacmansY < wallsSouthY && pacmansY > wallsNorthY) {
 					if(pacmansX > wallsLeftX && pacmansX < wallsRightX) {
 						num++;
@@ -188,10 +192,7 @@ public class PacmanGame {
 			if(num == 0) {
 				pacman.moveDown();
 			}
-		}
-		System.out.println("In frogger game (keyHit): "+s);
-		
-			
+		}				
 	}
 
 
@@ -212,141 +213,42 @@ public class PacmanGame {
 		}
 		
 	}
-	
+
 	public void randomMove() {
-		//first make all the ghosts get out otf the box from the exit this will be done in the pacmangame class
 		//math.random 4 and determine which way the ghost will go; every time it moves left or right it needs to check if it can turn
-		for(int g = 0; g < ghosts.size(); g++) {
-			for(int w = 0; w < walls.size(); w++) {
-				int direction = (int) ((Math.random())*4);
-				
-				if(direction == 0) {
-					if(!(ghosts.get(g).hit(walls.get(w)))) {
-						ghosts.get(g).moveDown();
-					}
-				}
-				if(direction == 1) {
-					if(!(ghosts.get(g).hit(walls.get(w)))) {
-						ghosts.get(g).moveUp();
-					}
-				}
-				if(direction == 2) {
-					if(!(ghosts.get(g).hit(walls.get(w)))) {					
-						ghosts.get(g).moveRight();
-					}
-				}
-				if(direction ==3) {
-					if(!(ghosts.get(g).hit(walls.get(w)))) {
-						ghosts.get(g).moveLeft();
-						}
-			}
-			}
-		}
-		}
-
-	public boolean checkMoveDown(GameObject go) {
-		int goX = go.getLocx();
-		int goY = go.getLocy()+50;
-		int num = 0; // number of overlapping walls
-		for(int i = 0; i < walls.size(); i++) {
-			int wallsLeftX = walls.get(i).getLocx();
-			int wallsRightX = walls.get(i).getLocx() + walls.get(i).getWidth();
-			int wallsNorthY = walls.get(i).getLocy();
-			int wallsSouthY = walls.get(i).getLocy() + walls.get(i).getHeight();
-			if(goX < wallsSouthY && goY > wallsNorthY) {
-				if(goX > wallsLeftX && goX < wallsRightX) {
-					num++;
-				}
-				if(goX+39 > wallsLeftX && goX +39 < wallsRightX) {
-					num++;
+			int direction = (int) ((Math.random())*4);
+			if(direction == down) {
+				if(checkHitWall(ghosts.get(2))==false){
+					ghosts.get(2).moveDown();
 				}
 			}
-			
+			if(direction == up) {
+				if(checkHitWall(ghosts.get(2))==false) {
+					ghosts.get(2).moveUp();
+				}
+			}
+			if(direction == right) {
+				if(checkHitWall(ghosts.get(2))==false) {					
+					ghosts.get(2).moveRight();
+				}
+			}
+			if(direction ==left) {
+				if(checkHitWall(ghosts.get(2))==false) {
+					ghosts.get(2).moveLeft();
+					}
+			}
 		}
-		if(num == 0) {
-			return true;
-		}
-		return false;
-		
-	}
 	
-	public boolean checkMoveUp(GameObject go) {
-		int goX = go.getLocx();
-		int goY = go.getLocy() -10;
-		int num = 0; // number of overlapping walls
-		for(int i = 0; i < walls.size(); i++) {
-			int wallsLeftX = walls.get(i).getLocx();
-			int wallsRightX = walls.get(i).getLocx() + walls.get(i).getWidth();
-			int wallsNorthY = walls.get(i).getLocy();
-			int wallsSouthY = walls.get(i).getLocy() + walls.get(i).getHeight();
-			if(goX < wallsSouthY && goY > wallsNorthY) {
-				if(goX > wallsLeftX && goX < wallsRightX) {
-					num++;
-				}
-				if(goX+39 > wallsLeftX && goX +39 < wallsRightX) {
-					num++;
-				}
-				
-				
-			}
-		}
-		if(num == 0) {
-			return true;
-		}
-		return false;
-	}
 
-	public boolean checkMoveRight(GameObject go) {
-		int goX = go.getLocx() + 50;
-		int goY = go.getLocy();
-		int num = 0; // number of overlapping walls
-		for(int i = 0; i < walls.size(); i++) {
-			int wallsLeftX = walls.get(i).getLocx();
-			int wallsRightX = walls.get(i).getLocx() + walls.get(i).getWidth();
-			int wallsNorthY = walls.get(i).getLocy();
-			int wallsSouthY = walls.get(i).getLocy() + walls.get(i).getHeight();
-			if(goX > wallsLeftX && goX < wallsRightX) {
-				if(goY < wallsSouthY && goY > wallsNorthY) {
-					num++;
-				}
-				if(goY+40 <wallsSouthY && goY +40 >wallsNorthY) {
-					num++;
-				}
-				
-			}
-		}
-		if(num == 0) {
-			return true;
-		}
-		return false;
-	}
-
-	public boolean checkMoveLeft(GameObject go) {
-			
-			int goX = go.getLocx()-9;
-			int goY = go.getLocy();
-			int num = 0; // number of overlapping walls
-			for(int i = 0; i < walls.size(); i++) {
-				int wallsLeftX = walls.get(i).getLocx();
-				int wallsRightX = walls.get(i).getLocx() + walls.get(i).getWidth();
-				int wallsNorthY = walls.get(i).getLocy();
-				int wallsSouthY = walls.get(i).getLocy() + walls.get(i).getHeight();
-				if(goX > wallsLeftX && goX < wallsRightX) {
-					if(goY < wallsSouthY && goY > wallsNorthY) {
-						num++;
-					}
-					if(goY+39 <wallsSouthY && goY +39 >wallsNorthY) {
-						num++;
-					}
-				}
-			}
-			
-			if(num == 0) {
+	
+	public boolean checkHitWall(Ghost g) {
+		for(int i = 0; i < walls.size(); i ++) {
+			if(g.hit(walls.get(i))) {
 				return true;
 			}
-			return false;
+		}
+		return false;
 		
 	}
-	
 	
 }
