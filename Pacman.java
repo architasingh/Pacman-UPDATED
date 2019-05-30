@@ -5,18 +5,34 @@ import javax.swing.ActionMap;
 
 public class Pacman extends PlayerControlledGameObject {
 	
-	private Rectangle rect;
-	private int locx, locy;
 	private Image left = getImage("pacmanLeft.png");
 	private Image right = getImage("pacman.png");
-	private Image up;
-	private Image down;
+	private Image up = getImage("pacmanUp.png");
+	private Image down = getImage("pacmanDown.png");
+	
 	
 	public Pacman(int x, int y, int w, int h, ActionMap am) {
 		super(x, y, w, h, "pacman.png", am);
-		rect = new Rectangle (x,y,w,h);
-		locx = x;
-		locy = y;
+		}
+	
+	public void moveLeft() {
+		super.moveLeft();
+		setImage(left);
+	}
+	
+	public void moveRight() {
+		super.moveRight();
+		setImage(right);
+
+	}
+	public void moveUp() {
+		super.moveUp();
+		setImage(up);
+	}
+	
+	public void moveDown() {
+		super.moveDown();
+		setImage(down);
 	}
 
 }
