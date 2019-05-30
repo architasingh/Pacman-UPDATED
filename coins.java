@@ -1,3 +1,4 @@
+import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
 
@@ -20,5 +21,9 @@ public class Coin extends GameObject{
 	public void disappear() {
 		show = false;
 		coin = null;
+	}
+	
+	public void draw(Graphics g) {
+		g.drawImage(coin, locx, locy, 15, 15, null);
 	}
 }
