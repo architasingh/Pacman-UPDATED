@@ -4,78 +4,42 @@ import java.awt.Toolkit;
 import java.util.*;
 
 public class PacmanGame {
-
 	public boolean youWon = false;
-	Ghost pinkghost;
-	Ghost blueghost;
-	Ghost redghost;
-	Pacman pacman;
-	
-	int level = 0;
-
+	public boolean gameover = false;
 	List<GameObject> gos = new ArrayList<>();
 	
-	
 	List<Coin> coins = new ArrayList<>();
-
+	//list of walls
 	List<Wall> walls = new ArrayList<>();
-
-	List<Ghost> ghosts = new ArrayList<>();
 	
+	List<Ghost> ghosts = new ArrayList<>();
 	private int Gsize = 40;
 	public static final int down = 0, up = 1, right = 2, left =3;
 
+	Pacman pacman;
+	int level=0;
 	public PacmanGame() {
-		pacman = new Pacman(0, 0, Gsize, Gsize, null);
-		pinkghost = new Ghost(240, 350, Gsize, Gsize, "pinkghost.png");
-		blueghost = new Ghost(300, 350, Gsize, Gsize, "_blueghost.png");
-		redghost = new Ghost(420, 350, Gsize, Gsize, "redghost.png");
-		
+		pacman = new Pacman(0,0, Gsize, Gsize,  null);
 		for (int y = Gsize/2; y < 720; y += Gsize) {
 			for (int x = Gsize/2; x < 720; x += Gsize) {
-				coins.add(new Coin(x, y, 5, 5)); // x, y, w, h
+				coins.add(new Coin(x, y, 4, 4)); // x, y, w, h
 			}
 		}
-		
-		walls.add(new Wall(40, 40, 160, 160));// two squares
-		walls.add(new Wall(520, 40, 160, 160));// two squares
-		walls.add(new Wall(0, 280, 40, 400));// L shaped ones vertical
-		walls.add(new Wall(0, 680, 400, 40)); // horizontal
-		walls.add(new Wall(640, 250, 40, 300));// vertical ones at the bottom
-		walls.add(new Wall(80, 320, 40, 310));
-		ghosts.add(pinkghost);
-		ghosts.add(blueghost);
-		ghosts.add(redghost);
+		walls.add(new Wall(40,40, 160, 160));//two squares
+		walls.add(new Wall(520,40,160, 160));//two squares
+		walls.add(new Wall(40,240,40, 400));//L shaped ones vertical
+		walls.add(new Wall(40,640, 400,40)); //horizontal
+		walls.add(new Wall(640,245,40,300));//vertical ones at the bottom
+		walls.add(new Wall(240,280,40,315));
+		ghosts.add(new Ghost(240,320,Gsize,Gsize, "pinkghost.png"));
+		ghosts.add(new Ghost(300,350,Gsize,Gsize, "blueghost.png"));
+		ghosts.add(new Ghost(420,350,Gsize,Gsize, "redghost.png"));
 		gos.add(pacman);
-//		level++;
-	}
-
-	private void loadLevel() {
-		// this is just an idea. Maybe store the different levels as text files
-		List<List<GameObject>> levelObjects = LevelReader.readInLevel(level);
-		gos.clear();
-		if (levelObjects != null) {
-			for (List<GameObject> list : levelObjects) {
-				if (list != null) {
-					for (GameObject go : list) {
-//						if(go instanceof Log)
-//							logs.add(go);
-//						if(go instanceof Auto)
-//							autos.add(go);
-						gos.add(go);
-					}
-				}
-			}
-		}
-		gos.add(pacman);
-		ghosts.add(pinkghost);
-		ghosts.add(blueghost);
-		ghosts.add(redghost);
 	}
 
 	// What do you want to do when a key is hit?
 	public void keyHit(String s) {
-		if(coins.size() == 29) {
+		if(coins.size() == 67) {
 			youWon = true;
 		}
 		for(int i = 0; i < coins.size(); i++) {
@@ -109,11 +73,15 @@ public class PacmanGame {
 			if(num == 0) {
 				pacman.moveLeft();
 			}
+			for(int i = 0; i < ghosts.size(); i++) {
+				if(ghosts.get(i).hit(pacman)) {
+					gameover = true;
+					System.out.println(gameover);
+				}
+			}
 		
 			}
-			
 
-			
 		if(s.equals("right")) {
 			int pacmansRight = pacman.getLocx() + 50;
 			int pacmansY = pacman.getLocy();
@@ -137,6 +105,12 @@ public class PacmanGame {
 			}
 			if(num == 0) {
 				pacman.moveRight();
+			}
+			for(int i = 0; i < ghosts.size(); i++) {
+				if(ghosts.get(i).hit(pacman)) {
+					gameover = true;
+					System.out.println(gameover);
+				}
 			}
 			
 		}
@@ -165,9 +139,14 @@ public class PacmanGame {
 			if(num == 0) {
 				pacman.moveUp();
 			}
+			for(int i = 0; i < ghosts.size(); i++) {
+				if(ghosts.get(i).hit(pacman)) {
+					gameover = true;
+					System.out.println(gameover);
+				}
+			}
 		}
-		if(s.equals("down")) {
-			
+		if(s.equals("down")) {	
 			int pacmansX = pacman.getLocx();
 			int pacmansY = pacman.getLocy()+50;
 			int num = 0; // number of overlapping walls
@@ -192,54 +171,29 @@ public class PacmanGame {
 			if(num == 0) {
 				pacman.moveDown();
 			}
+			for(int i = 0; i < ghosts.size(); i++) {
+				if(ghosts.get(i).hit(pacman)) {
+					gameover = true;
+					System.out.println(gameover);
+				}
+			}
 		}				
 	}
 
-
-
 	public void draw(Graphics g) {
-		for(GameObject go:gos) {
-			go.draw(g);
-		}
 		for(GameObject ghost: ghosts) {
 			ghost.draw(g);
 		}
 		for(Coin c: coins) {
 			c.draw(g);
 		}
+		for(GameObject go:gos) {
+			go.draw(g);
+		}
 		for(Wall w: walls) {
 			w.draw(g);
-			
 		}
-		
 	}
-
-	public void randomMove() {
-		//math.random 4 and determine which way the ghost will go; every time it moves left or right it needs to check if it can turn
-			int direction = (int) ((Math.random())*4);
-			if(direction == down) {
-				if(checkHitWall(ghosts.get(2))==false){
-					ghosts.get(2).moveDown();
-				}
-			}
-			if(direction == up) {
-				if(checkHitWall(ghosts.get(2))==false) {
-					ghosts.get(2).moveUp();
-				}
-			}
-			if(direction == right) {
-				if(checkHitWall(ghosts.get(2))==false) {					
-					ghosts.get(2).moveRight();
-				}
-			}
-			if(direction ==left) {
-				if(checkHitWall(ghosts.get(2))==false) {
-					ghosts.get(2).moveLeft();
-					}
-			}
-		}
-	
-
 	
 	public boolean checkHitWall(Ghost g) {
 		for(int i = 0; i < walls.size(); i ++) {
@@ -252,3 +206,10 @@ public class PacmanGame {
 	}
 	
 }
+	
+
+
+	
+	
+
+
