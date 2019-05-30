@@ -14,8 +14,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
-
-
 public class PacmanGameRunner {
 	private JPanel panel;
 	private PacmanGame game = new PacmanGame();
@@ -40,7 +38,7 @@ public class PacmanGameRunner {
 	public static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	public static final int WIDTH = 720,HEIGHT=720;
 	private static final int REFRESH_RATE = 500;
-//	public Image maze = getImage("maze.png");	
+	
 	public PacmanGameRunner() {
 		EventQueue.invokeLater(new Runnable() {
 			@Override
@@ -66,14 +64,12 @@ public class PacmanGameRunner {
 			@Override
 			public void paintComponent(Graphics g) {
 				super.paintComponent(g);
-//				g.drawImage(maze, 0, 0, 1080, 675, null);
 				drawGame(g);
-
-				
+				drawVictoryGame(g);
 			}
 		};
 		// random color to the background
-		panel.setBackground(new Color(0, 255, 255));
+		panel.setBackground(new Color(47, 224, 156));
 		
 		// so that the frame isn't minimized
 		panel.setPreferredSize(new Dimension(WIDTH,HEIGHT));
@@ -97,59 +93,76 @@ public class PacmanGameRunner {
 		timer = new Timer(REFRESH_RATE, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				if(game.gameover== true) {
+					timer.stop();
+				}
 				updateGame();
+				for(int i = 0; i < game.ghosts.size(); i++) {
+					if(game.ghosts.get(i).hit(game.pacman)) {
+						game.gameover = true;
+						System.out.println(game.gameover);
+					}
+				}
 				panel.repaint();
 			}
 		});
 		timer.start();
 	}
+	int pacmanx=0, pacmany = 0;
 
 	// this method is called every time the timer goes off (which right now is every 10 milliseconds = 100 times per second
+	
+	int hurts = 1;
+
 	protected void updateGame() {
 		ticks++;// keeps track of the number of times the timer has gone off
-		
-		int hurts = 1000/1000;
+
 		if(ticks %hurts == 0) {
+			if(ticks/hurts > 5) {
+				follow(game.ghosts.get(1));
+			}
 			panel.repaint();
 			System.out.println(ticks/hurts+" seconds");
-			
-			if(ticks/hurts > 5 && ) {
-				game.blueghost.randomMove();
+		
+			if(ticks/hurts > 5) {
+				if(game.checkHitWall(game.ghosts.get(2))) {
+					game.ghosts.get(2).diffDirection();
+				}
+				else {
+				game.ghosts.get(2).randomMove();
+				}
 			}
-//			if(ticks/hurts > 6) {
-//				game.yellowghost.randomMove();
-//			}
-			if(ticks/hurts > 7) {
-				game.pinkghost.randomMove();
+			if(ticks/hurts >5) {
+				game.ghosts.get(0).edgeMove();
 			}
-			if(ticks/hurts > 8) {
-				game.redghost.randomMove();
+
+		}
+
+	}
+		
+	private void follow(Ghost ghost) {
+		if(ticks%2 ==0) {
+			ghost.locx = pacmanx;
+			ghost.locy = pacmany;
+			pacmanx = game.pacman.getRect().x;
+			pacmany = game.pacman.getRect().y;
+			if(ghost.getLocx()==game.pacman.getLocx() && ghost.getLocy() == game.pacman.getLocy()) {
+				game.gameover = true;
+				
 			}
 		}
-		
-		}
-		
-	
+	}
 
 	private void mapKeyStrokesToActions(JPanel panel) {
 
-		// A map is an Data storage interface which defines
-		// an association of a key with a value
-		// to "add" to a map you use the "put" method
-		// to "get" from a map you use "get(key)" and the 
-		// value associated with the key is returned (or null)
 		ActionMap map = panel.getActionMap();
 		InputMap inMap = panel.getInputMap();
 
-		// code below associates pressing the up arrow with the command "up"
-		// essentially creating the command "up" being broadcast any time the 
-		// up key is hit
 		inMap.put(KeyStroke.getKeyStroke("pressed UP"), "up");
 		inMap.put(KeyStroke.getKeyStroke("pressed RIGHT"), "right");
 		inMap.put(KeyStroke.getKeyStroke("pressed DOWN"), "down");
 		inMap.put(KeyStroke.getKeyStroke("pressed LEFT"), "left");
-		// code below associates the "up" action with anything in the 
-		// actionPerformed method.  Right now, it just prints something
+		
 		map.put("up", new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -190,7 +203,29 @@ public class PacmanGameRunner {
 		panel.repaint();
 	}
 	protected void drawGame(Graphics g) {
-		game.draw(g);
+		if(game.gameover == false) {
+			game.draw(g);
+
+		}
+		if(game.gameover == true && game.youWon == false) {
+			g.drawImage(getImage("gameover.png"), 70, 150,600, 300, null);
+			Font stringFont = new Font( "SansSerif", Font.PLAIN, 18 );
+			g.setFont(stringFont);
+			g.drawString("You lost in " + ticks/(hurts*2) + " seconds", 250,500);
+			
+
+		}
+
 	}
+	protected void drawVictoryGame(Graphics g) {
+		if(game.youWon == true) {
+			g.drawImage(getImage("youwon!.png"), 70, 150, 600, 300, null);
+			Font stringFont = new Font( "SansSerif", Font.PLAIN, 18 );
+			g.setFont(stringFont);
+			g.drawString("You won in " + ticks/(hurts*2) + " seconds!!!", 250,500);
+		}
+	}
+	
+	
 
 }
