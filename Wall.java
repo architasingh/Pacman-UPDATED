@@ -8,7 +8,6 @@ public class Wall  extends GameObject{
 	private final int height;
 	private int locx, locy;
 	private Rectangle rect;
-	private static final double OVERLAP_THRESHOLD = .75, HIT_THRESHOLD = .05;
 
 	public Wall(int x, int y, int w, int h) {
 		super(x,y,w,h);
@@ -21,7 +20,7 @@ public class Wall  extends GameObject{
 	}
 
 	public void draw(Graphics g) {
-		g.setColor(Color.PINK);
+		g.setColor(new Color(252, 141, 132));
 		g.fillRect(locx, locy, width, height);
 	}
 	public int getWidth() {
@@ -31,6 +30,4 @@ public class Wall  extends GameObject{
 	public int getHeight() {
 		return height;
 	}
-
-
 }
