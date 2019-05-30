@@ -10,13 +10,16 @@ import javax.imageio.stream.ImageInputStream;
 
 public class GameObject {
 
-	private static final double OVERLAP_THRESHOLD = 1, HIT_THRESHOLD = .75;
+	private static final double OVERLAP_THRESHOLD = 1, HIT_THRESHOLD = .5;
 	public final static String PATH_PREFIX = "res/images/";
+	public boolean gameover = false;
 	private Rectangle rect;
-	
 	private Image image;
-	private int locx, locy;
-	//private SoundClip sound;  // MUST be a class for this!!
+	protected int locx;
+	protected int locy;
+	public int down = 0, up = 1, right = 2, left =3;
+	public int direction;
+
 	protected  Image getImage(String fn) {
 		Image img = null;
 		fn = PATH_PREFIX+fn;
@@ -33,9 +36,9 @@ public class GameObject {
 	
 	public GameObject(int x, int y, int w, int h, String str) {
 		rect = new Rectangle(x,y,w,h);
+		image = getImage(str);
 		locx = x;
 		locy = y;
-		image = getImage(str);
 	}
 	
 	public GameObject(int x, int y, int w, int h) {
@@ -50,8 +53,7 @@ public class GameObject {
 
 	public void draw(Graphics g) {
 		if(image != null) {
-			g.drawImage(image, rect.x, rect.y, rect.width, rect.height, null);
-			g.drawRect(rect.x, rect.y, rect.width, rect.height);
+			g.drawImage(image, locx, locy, rect.width, rect.height, null);
 		}
 	}
 	public static double area(Rectangle rect) {
@@ -65,7 +67,7 @@ public class GameObject {
 		double thisArea = area(this.rect), 
 				goArea = area(go.getRect()),
 				overArea = area(over);
-		return overArea > Math.min(thisArea, goArea)*HIT_THRESHOLD;
+		return overArea >= Math.min(thisArea, goArea)*HIT_THRESHOLD;
 	}
 	public Rectangle collisionRect(GameObject go) {
 		return this.rect.intersection(go.getRect());
@@ -86,67 +88,76 @@ public class GameObject {
 		return locx;
 	}
 
-	public void setLocx(int locx) {
-		this.locx = locx;
+	public void setLocx(int x) {
+		locx = x;
 	}
 
 	public int getLocy() {
 		return locy;
 	}
 
-	public void setLocy(int locy) {
-		this.locy = locy;
+	public void setLocy(int y) {
+		locy = y;
 	}
 
 	public void move(int i, int j) {
-		this.getRect().translate(i*(int)(this.getRect().getWidth())*2, j*(int)(this.getRect().getHeight())*2);
-		this.setLocx(this.getLocx());
-		this.setLocy(this.getLocy());
+		System.out.println("move: rect=" + this.getRect());
+		this.getRect().translate(i*(int)(this.getRect().getWidth()),
+				j*(int)(this.getRect().getHeight()));
 		locx = this.getRect().x;
 		locy = this.getRect().y;
+		this.setLocx(this.getLocx());
+		this.setLocy(this.getLocy());
 		
-		System.out.println(""+locx);
-		System.out.println("" + locy);
-		
+		System.out.println("move: x="+locx);
+		System.out.println("move: y=" + locy);
+			
 	}
-	
 	
 	public void moveLeft() {
 		move(-1,0);
+		direction = left;
 		if (!withinBounds()) {
 			moveRight();
+			direction = right;
 		}
 	}
 	
 	public void moveRight() {
 		move(1,0);
+		direction = right;
 		if (!withinBounds()) {
 			moveLeft();
+			direction = left;
 		}
 
 	}
 	
 	public void moveUp() {
 		move(0,-1);
+		direction = up;
 		if (!withinBounds()) {
 			moveDown();
+			direction = down;
 		}
 
 	}
 
 	public void moveDown() {
 		move(0,1);
+		direction = down;
 		if (!withinBounds()) {
 			moveUp();
+			direction = up;
 		}
 
 	}
 	
 	private boolean withinBounds() {
-		if (this.getLocx() > PacmanGameRunner.WIDTH || this.getLocx() < 0) {
+		if (this.getLocx() + this.getRect().getWidth() > PacmanGameRunner.WIDTH || this.getLocx() < 0) {
 			return false;
 		}
-		if (this.getLocy() > PacmanGameRunner.HEIGHT || this.getLocy() < 0) {
+		if (this.getLocy() + this.getRect().getHeight() > PacmanGameRunner.HEIGHT || this.getLocy() < 0) {
 			return false;
 		}
 		return true;
